@@ -5,7 +5,12 @@
  */
 package net.trainning.dukeclube.persistencia.gateway;
 
-import com.sun.jdi.connect.spi.Connection;
+
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -22,8 +27,8 @@ import net.trainning.dukeclube.persistencia.igateway.IGatewaySocio;
 public class GatewaySocio  implements IGatewaySocio {
     private static final String SQL_INCLUIR =
             "INSERT INTO socio " +
-            "(codigosocio, categoria, nome,sexo,datanascimento, telefonefixo, telefonecelular, email) " +
-            "values (?,?,?,?,?,?,?,?)";
+            "(categoria, nome,sexo,datanascimento, telefonefixo, telefonecelular, email) " +
+            "values (?,?,?,?,?,?,?)";
 
     private static final String SQL_ALTERAR =
             "UPDATE socio SET " +
@@ -69,17 +74,17 @@ public class GatewaySocio  implements IGatewaySocio {
         try{
             con = GerenciadorDeConexao.getConexao();
             stmt = con.prepareStatement(SQL_INCLUIR);
-            GeradorDeChave geradorDeChave = new GeradorDeChave("Socio");
-            long codigosocio = geradorDeChave.getProximoCodigo();
-            stmt.setLong(1,codigosocio);
-            stmt.setInt(2,socio.getCategoria());
-            stmt.setString(3,socio.getNome());
-            stmt.setInt(4,socio.getSexo());
+          //  GeradorDeChave geradorDeChave = new GeradorDeChave("Socio");
+          //  long codigosocio = geradorDeChave.getProximoCodigo();
+         //   stmt.setLong(1,codigosocio);
+            stmt.setInt(1,socio.getCategoria());
+            stmt.setString(2,socio.getNome());
+            stmt.setInt(3,socio.getSexo());
             java.util.Date dataNascimento = socio.getDataNascimento();
-            stmt.setDate(5, new java.util.Date(dataNascimento.getTime()));
-            stmt.setString(6, socio.getTelefoneFixo());
-            stmt.setString(7, socio.getTelefoneCelular());
-            stmt.setString(8, socio.getEmail());
+            stmt.setString(4, (String)dataNascimento.toString());
+            stmt.setString(5, socio.getTelefoneFixo());
+            stmt.setString(6, socio.getTelefoneCelular());
+            stmt.setString(7, socio.getEmail());
             
             stmt.executeUpdate();
         }
@@ -110,7 +115,7 @@ public class GatewaySocio  implements IGatewaySocio {
             stmt.setString(2,socio.getNome());
             stmt.setInt(3,socio.getSexo());
             java.util.Date dataNascimento = socio.getDataNascimento();
-            stmt.setDate(4, new java.util.Date(dataNascimento.getTime()));
+            stmt.setDate(4, (Date) new java.util.Date(dataNascimento.getTime()));
             stmt.setString(5, socio.getTelefoneFixo());
             stmt.setString(6, socio.getTelefoneCelular());
             stmt.setString(7, socio.getEmail());
@@ -132,14 +137,14 @@ public class GatewaySocio  implements IGatewaySocio {
     }
     
     
-     private void criarSocio(ResultSet rs) throws DukeClubeException{
+     private Socio criarSocio(ResultSet rs) throws DukeClubeException{
         Socio socio = new Socio();
          
         try{
            socio.setCodigo(rs.getLong("codigosocio"));
            socio.setCategoria(rs.getByte("Categoria"));
-           socio.getNome(rs.getString("nome"));
-           socio.getSexo(rs.getByte("sexo"));
+           socio.setNome(rs.getString("nome"));
+           socio.setSexo(rs.getByte("sexo"));
            socio.setDataNascimento(rs.getDate("datanascimento"));
            socio.setTelefoneFixo(rs.getString("telefonefixo"));
            socio.setTelefoneCelular(rs.getString("telefonecelular"));
@@ -202,7 +207,7 @@ public class GatewaySocio  implements IGatewaySocio {
             con = GerenciadorDeConexao.getConexao();
             stmt = con.prepareStatement(SQL_PESQUISARTODOS);
             
-            rs = stmt.excuteQuery();
+            rs = stmt.executeQuery();
             List socios = new ArrayList();
             while(rs.next()){
                 Socio socio = criarSocio(rs);
@@ -235,7 +240,7 @@ public class GatewaySocio  implements IGatewaySocio {
             stmt = con.prepareStatement(SQL_PESQUISARPORNOME);
             
             stmt.setString(1,"%" + nome + "%");
-            rs = stmt.excuteQuery();
+            rs = stmt.executeQuery();
             List socios = new ArrayList();
             while(rs.next()){
                 Socio socio = criarSocio(rs);
@@ -313,7 +318,7 @@ public class GatewaySocio  implements IGatewaySocio {
                 stmt.setString(2,dependente.getNome());
                 stmt.setInt(3,dependente.getSexo());
                 java.util.Date dataNascimento = dependente.getDataNascimento();
-                stmt.setDate(4, new java.util.Date(dataNascimento.getTime()));
+                stmt.setDate(4, (Date) new java.util.Date(dataNascimento.getTime()));
                 stmt.setInt(5,dependente.getParentesco());
                 stmt.setLong(6,socio.getCodigo());
                 stmt.executeUpdate();
@@ -341,11 +346,11 @@ public class GatewaySocio  implements IGatewaySocio {
             stmt = con.prepareStatement(SQL_PESQUISARDEPENDENTE);
             
             stmt.setLong(1,socio.getCodigo());
-            rs = stmt.excuteQuery();
+            rs = stmt.executeQuery();
             List socios = new ArrayList();
             while(rs.next()){
                 Dependente dependente = criarDependente(rs);
-                socios.adicionarDependente(dependente);
+                boolean add = socios.add(dependente);
             }
             
         }

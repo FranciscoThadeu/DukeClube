@@ -5,7 +5,11 @@
  */
 package net.trainning.dukeclube.persistencia.gateway;
 
-import com.sun.jdi.connect.spi.Connection;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import net.trainning.dukeclube.excecao.DukeClubeException;
 
 /**

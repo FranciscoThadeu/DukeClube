@@ -5,10 +5,12 @@
  */
 package net.trainning.dukeclube.modelo.dominio;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import net.trainning.dukeclube.excecao.DukeClubeException;
 
 /**
  *
@@ -39,7 +41,7 @@ public class Socio {
     }
 
     public Socio() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    //    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     /**

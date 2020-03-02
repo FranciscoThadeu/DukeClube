@@ -5,7 +5,12 @@
  */
 package net.trainning.dukeclube.persistencia.gateway;
 
-import com.sun.jdi.connect.spi.Connection;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import javax.swing.JOptionPane;
 import net.trainning.dukeclube.excecao.DukeClubeException;
 
 /**
@@ -20,19 +25,23 @@ class GerenciadorDeConexao {
      */
     static Connection getConexao() throws DukeClubeException{
         try {
-            Class.forName(ParametrosBD.DRIVER);
-            Connection con = DriverManager.getConnection(
+                 //   Class.forName(ParametrosBD.DRIVER);
+          Connection con = DriverManager.getConnection(
                 ParametrosBD.URL,
-                ParametrosBD.URL,
+                ParametrosBD.USER,
                 ParametrosBD.PASSWORD);
-            return con;
+
+             
+              return con;
+          
         }
-        catch(ClassNotFoundException exc){
-            String mensagem = "Não foi possível localizar o drive de banco de dados";
-            throw new DukeClubeException(mensagem);
-        }
+//        catch(ClassNotFoundException exc){
+//            String mensagem = "Não foi possível localizar o drive de banco de dados";
+//            throw new DukeClubeException(mensagem);
+//        }
         catch(SQLException exc){
              String mensagem = "Não foi possível conectar com banco de dados";
+              JOptionPane.showMessageDialog(null, " Erro de conexão \n " + exc);
             throw new DukeClubeException(mensagem);
         }
     }
