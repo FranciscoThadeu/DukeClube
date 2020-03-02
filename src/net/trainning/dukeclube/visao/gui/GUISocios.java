@@ -1,0 +1,309 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package net.trainning.dukeclube.visao.gui;
+
+import java.awt.Dimension;
+import java.awt.event.ActionListener;
+import java.beans.PropertyVetoException;
+import java.util.Iterator;
+import java.util.List;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import net.trainning.dukeclube.excecao.DukeClubeException;
+import net.trainning.dukeclube.modelo.dominio.Socio;
+import net.trainning.dukeclube.modelo.dominio.constante.Constante;
+import net.trainning.dukeclube.visao.ouvinte.OuvinteDeGUIDadosSocio;
+import net.trainning.dukeclube.visao.ouvinte.OuvinteDeGUIDependentes;
+
+/**
+ *
+ * @author trainning
+ */
+public class GUISocios extends javax.swing.JInternalFrame {
+    private GUIDependentes guiDependentes;
+    /**
+     * Creates new form GUISocios
+     */
+    public GUISocios() {
+        initComponents();
+       
+    }
+    GUIDadosSocio  guiDadosSocio;
+    private List socios;
+    
+    public void setPosicao(){
+        Dimension d = this.getDesktopPane().getSize();
+        this.setLocation((d.width - this.getSize().width) / 6,
+                       (d.height - this.getSize().height) / 6);
+    }
+    
+    public void exibirMensagem(String mensagem, String titulo, boolean isErro){
+        int tipo;
+        if(isErro){
+            tipo = JOptionPane.ERROR_MESSAGE;
+        }else{
+            tipo = JOptionPane.INFORMATION_MESSAGE;
+        }
+        JOptionPane.showMessageDialog(null, mensagem, titulo, tipo);
+    }
+    
+    private void abrirGUIDadosSocio(Socio socio){
+        if(guiDadosSocio == null){
+            guiDadosSocio = new GUIDadosSocio();
+            OuvinteDeGUIDadosSocio ouvinte = new OuvinteDeGUIDadosSocio(guiDadosSocio);
+            this.getParent().add(guiDadosSocio);
+            guiDadosSocio.setPosicao();
+        }
+        
+        guiDadosSocio.setSocio(socio);
+        guiDadosSocio.setVisible(true);
+        try{
+            guiDadosSocio.setSelected(true);
+        }catch(PropertyVetoException ex){
+            exibirMensagem("Não foi possível selecionar a janela GUIDadosSocio","DukeClube - Sócios", true);
+            
+        }
+    }
+    
+    public void exibirSocios(List socios){
+        this.socios = socios;
+        
+        DefaultTableModel model = (DefaultTableModel) tSocios.getModel();
+        this.removerLinhaDaTabela(model);
+        
+        Iterator resultado = socios.iterator();
+        
+        while(resultado.hasNext()){
+            Socio socio = (Socio) resultado.next();
+            String nome = socio.getNome();
+            String telefoneFixo = socio.getTelefoneFixo();
+            String telefoneCelular = socio.getTelefoneCelular();
+            String email = socio.getEmail();
+            
+            Object[] linha = {nome, telefoneFixo,telefoneCelular,email};
+            model.addRow(linha);
+        }
+        
+    }
+    
+    public void abrirGUIDependentes(Socio socio){
+        if(guiDependentes == null){
+            guiDependentes = new GUIDependentes();
+            OuvinteDeGUIDependentes ouvinte = new OuvinteDeGUIDependentes(guiDependentes);
+            this.getParent().add(guiDependentes);
+            guiDependentes.setPosicao();  
+        }
+        
+        guiDependentes.setSocio(socio);
+        guiDependentes.setVisible(true);
+        try{
+            guiDependentes.setSelected(true);
+        }catch(PropertyVetoException ex){
+            exibirMensagem("Não foi possível selecionar a janela GUIDependnetes","DukeClube - Sócios",true);
+        }
+        
+    }
+    
+    private void removerLinhaDaTabela(DefaultTableModel model){
+        while(model.getRowCount()>0){
+            int ultimaLinha = model.getColumnCount() - 1;
+            model.removeRow(ultimaLinha);
+        }
+    }
+    
+    public Socio getSocio() throws DukeClubeException {
+        Socio socio = null;
+        int linhaSelecionada = tSocios.getSelectedRow();
+        if(linhaSelecionada < 0){
+            throw new DukeClubeException("Não foi selecionado nenhum sócio.");
+        }
+        socio = (Socio) this.socios.get(linhaSelecionada);
+        return socio;
+    }
+    
+    public String getNome(){
+        return tfNome.getText();
+    }
+    
+    public int pedirConfirmacao(String mensagem, String titulo, int tipo){
+        int resposta = JOptionPane.showConfirmDialog(null,mensagem,titulo,tipo);
+        return resposta;
+    }
+    
+    public void bExcluirSocioActionListener(ActionListener ouvinte){
+        bExcluirSocio.addActionListener(ouvinte);
+    }
+    
+    public void bPesquisarSocioActionListener(ActionListener ouvinte){
+        bPesquisarSocio.addActionListener(ouvinte);
+    }
+    
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tSocios = new javax.swing.JTable();
+        bNovoSocio = new javax.swing.JButton();
+        bVerDependentes = new javax.swing.JButton();
+        bAlterarSocio = new javax.swing.JButton();
+        bExcluirSocio = new javax.swing.JButton();
+        pPesquisarSocio = new javax.swing.JPanel();
+        lNome = new javax.swing.JLabel();
+        tfNome = new javax.swing.JTextField();
+        bPesquisarSocio = new javax.swing.JButton();
+
+        setClosable(true);
+        setTitle("DukeClube - Sócios");
+
+        tSocios.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Nome", "Telefone Fixo", "Telefone Celular", "Email"
+            }
+        ));
+        jScrollPane1.setViewportView(tSocios);
+
+        bNovoSocio.setText("Novo Sócio");
+        bNovoSocio.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bNovoSocioActionPerformed(evt);
+            }
+        });
+
+        bVerDependentes.setText("Ver Dependentes");
+        bVerDependentes.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bVerDependentesActionPerformed(evt);
+            }
+        });
+
+        bAlterarSocio.setText("Alterar");
+        bAlterarSocio.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bAlterarSocioActionPerformed(evt);
+            }
+        });
+
+        bExcluirSocio.setText("Excluir");
+
+        pPesquisarSocio.setBorder(javax.swing.BorderFactory.createTitledBorder("Critério de Pesquisa"));
+
+        lNome.setText("Nome");
+
+        bPesquisarSocio.setText("Pesquisar");
+
+        javax.swing.GroupLayout pPesquisarSocioLayout = new javax.swing.GroupLayout(pPesquisarSocio);
+        pPesquisarSocio.setLayout(pPesquisarSocioLayout);
+        pPesquisarSocioLayout.setHorizontalGroup(
+            pPesquisarSocioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pPesquisarSocioLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(lNome)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(tfNome)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(bPesquisarSocio))
+        );
+        pPesquisarSocioLayout.setVerticalGroup(
+            pPesquisarSocioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pPesquisarSocioLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(pPesquisarSocioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lNome)
+                    .addComponent(tfNome, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(bPesquisarSocio))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(pPesquisarSocio, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(bVerDependentes)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(bAlterarSocio)
+                        .addGap(18, 18, 18)
+                        .addComponent(bExcluirSocio))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 589, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(bNovoSocio)))
+                .addContainerGap())
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(18, 18, 18)
+                .addComponent(bNovoSocio)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(bVerDependentes)
+                    .addComponent(bAlterarSocio)
+                    .addComponent(bExcluirSocio))
+                .addGap(18, 18, 18)
+                .addComponent(pPesquisarSocio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(20, Short.MAX_VALUE))
+        );
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void bNovoSocioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bNovoSocioActionPerformed
+        Socio socio = new Socio();
+        socio.setCodigo(Constante.NOVO);
+        
+        this.abrirGUIDadosSocio(socio);
+    }//GEN-LAST:event_bNovoSocioActionPerformed
+
+    private void bAlterarSocioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bAlterarSocioActionPerformed
+        Socio socio = null;
+        try{
+            socio = this.getSocio();
+            this.abrirGUIDadosSocio(socio);
+        }catch(DukeClubeException exc){
+            this.exibirMensagem(exc.getMessage(), "Mensagem de erro", true);
+        }
+    }//GEN-LAST:event_bAlterarSocioActionPerformed
+
+    private void bVerDependentesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bVerDependentesActionPerformed
+        Socio socio = null;
+        try{
+            socio = this.getSocio();
+            this.abrirGUIDependentes(socio);
+        }catch(DukeClubeException ex){
+            this.exibirMensagem(ex.getMessage(), "Mensagem de Erro", true);
+        }
+    }//GEN-LAST:event_bVerDependentesActionPerformed
+
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton bAlterarSocio;
+    private javax.swing.JButton bExcluirSocio;
+    private javax.swing.JButton bNovoSocio;
+    private javax.swing.JButton bPesquisarSocio;
+    private javax.swing.JButton bVerDependentes;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel lNome;
+    private javax.swing.JPanel pPesquisarSocio;
+    private javax.swing.JTable tSocios;
+    private javax.swing.JTextField tfNome;
+    // End of variables declaration//GEN-END:variables
+}
